@@ -20,31 +20,33 @@ namespace Faculty.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string Indexes, string SearchString)
+        public async Task<IActionResult> Index(string StudentIndex, string SearchString)
         {
          
-            IQueryable<Student> students = _context.Student.AsQueryable();
+
+             IQueryable<Student> students = _context.Student.AsQueryable();
             IQueryable<string> IndexQuery = _context.Student.OrderBy(m => m.StudentId).Select(m => m.StudentId).Distinct();
              
-           
             if (!string.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.FirstName.Contains(SearchString)); 
-            }
+                students = students.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
 
-            if (!string.IsNullOrEmpty(Indexes))
+            } 
+
+            if (!string.IsNullOrEmpty(StudentIndex))
             {
-                students = students.Where(x => x.StudentId == Indexes); 
+                students = students.Where(x => x.StudentId == StudentIndex); 
             }
+           
+             students = students.Include(m => m.Courses).ThenInclude(m => m.Course);
 
-            students =students.Include(m => m.Courses).ThenInclude(m => m.Course);
-         
 
             var FullNameStudentId = new FullNameStudentIdVM
             {
 
                 Indexes = new SelectList(await IndexQuery.ToListAsync()),
                 Students = await students.ToListAsync()
+                // Students = students.ToList()
             };
 
             return View(FullNameStudentId);

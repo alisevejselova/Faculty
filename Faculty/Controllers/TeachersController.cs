@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Faculty.Models;
 using Faculty.ViewModels;
 
+
 namespace Faculty.Controllers
 {
     public class TeachersController : Controller
@@ -39,10 +40,13 @@ namespace Faculty.Controllers
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                teachers = teachers.ToList().Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
-                //teachers = teachers.Where(s => s.FullName.Contains(searchString));  //ne raboti
+               teachers = teachers.ToList().Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
+               // teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())); 
             }
 
+           
+            //IQueryable teacher = teachers.AsQueryable();
+            teachers = teachers.Include(m => m.FirstCourses).Include(c => c.SecondCourses).ThenInclude(m => m.Course);
 
             var FullNameDegreeAcademicRank = new FullNameDegreeAcademicRankVM
             {

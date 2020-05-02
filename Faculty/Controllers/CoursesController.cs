@@ -63,6 +63,7 @@ namespace Faculty.Controllers
             var course = await _context.Course
                 .Include(c => c.FirstTeacher)
                 .Include(c => c.SecondTeacher)
+                .Include(c => c.Students).ThenInclude(c => c.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {
