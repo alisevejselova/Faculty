@@ -40,13 +40,13 @@ namespace Faculty.Controllers
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-               teachers = teachers.ToList().Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
+               teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())).ToList();
                // teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())); 
             }
 
            
             //IQueryable teacher = teachers.AsQueryable();
-            teachers = teachers.Include(m => m.FirstCourses).Include(c => c.SecondCourses).ThenInclude(m => m.Course);
+           // teachers = teachers.Include(m => m.FirstCourses).Include(c => c.SecondCourses).ThenInclude(m => m.Course);
 
             var FullNameDegreeAcademicRank = new FullNameDegreeAcademicRankVM
             {

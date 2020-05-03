@@ -29,7 +29,9 @@ namespace Faculty.Controllers
              
             if (!string.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
+                students = students.Where(s => s.LastName.Contains(SearchString)
+                             || s.FirstName.Contains(SearchString));
+                // students = students.Where(s => s.FullName.Contains(SearchString));
 
             } 
 
