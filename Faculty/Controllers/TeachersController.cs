@@ -182,5 +182,16 @@ namespace Faculty.Controllers
         {
             return _context.Teacher.Any(e => e.Id == id);
         }
+        public async Task<IActionResult> GetCourses(int id)
+        {
+            var courses = _context.Course.Where(c => c.FirstTeacherID == id || c.SecondTeacherID == id);
+            courses = courses.Include(t => t.FirstTeacher).Include(t => t.SecondTeacher);
+
+            ViewData["TeacherId"] = id;
+            ViewData["TeacherAcademicRank"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.AcademicRank).FirstOrDefault();
+            ViewData["TeacherFullName"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
+            return View(courses);
+        }
+     
     }
 }

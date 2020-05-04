@@ -198,5 +198,24 @@ namespace Faculty.Controllers
         {
             return _context.Student.Any(e => e.Id == id);
         }
+        // GET: Students/MyCourses/2
+        public async Task<IActionResult> StudentCourses(int? id)
+        {
+            IQueryable<Course> courses = _context.Course.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).AsQueryable();
+
+            IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();
+
+            enrollments = enrollments.Where(s => s.StudentId == id); //ogrencinin tum enrollmentleri
+
+            IEnumerable<int> enrollmentsCoursesId = enrollments.Select(e => e.CourseId).Distinct();  //tum kurs id ler
+
+            courses = courses.Where(s => enrollmentsCoursesId.Contains(s.Id)); //student uygun olan course al
+
+            courses = courses.Include(c => c.Students).ThenInclude(c => c.Student);
+
+            ViewData["StudentFullName"] = _context.Student.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
+            ViewData["StudentId"] = id;
+            return View(courses);
+        }
     }
 }

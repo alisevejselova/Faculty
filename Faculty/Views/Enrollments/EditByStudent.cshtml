@@ -1,0 +1,91 @@
+﻿@model Faculty.ViewModels.EnrollmentEditVM
+@{
+    ViewData["Title"] = "EditByStudent";
+}
+
+<h1>StudentEdits</h1>
+
+
+<h2>Edit @ViewData["StudentFullName"]'s enrollment for the course - @ViewData["CourseTitle"] </h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditByStudent" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input asp-for="Semester" class="form-control" type="hidden" />
+                <span asp-validation-for="Semester" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Year" class="form-control" type="hidden" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Grade" class="form-control" type="hidden" />
+                <span asp-validation-for="Grade" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SeminarUrl" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="SeminarUrl" type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose pdf, doc or docx file</label>
+                </div>
+                <span asp-validation-for="SeminarUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectUrl" class="control-label"></label>
+                <input asp-for="ProjectUrl" class="form-control" />
+                <span asp-validation-for="ProjectUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ExamPoints" class="form-control" type="hidden" />
+                <span asp-validation-for="ExamPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="SeminarPoints" class="form-control" type="hidden" />
+                <span asp-validation-for="SeminarPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ProjectPoints" class="form-control" type="hidden" />
+                <span asp-validation-for="ProjectPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AdditionalPoints" class="form-control" type="hidden" />
+                <span asp-validation-for="AdditionalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="FinishDate" class="form-control" type="hidden" />
+                <span asp-validation-for="FinishDate" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId"></select>
+            </div>
+            <div class="form-group" hidden>
+                <select asp-for="StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Students" asp-action="MyCourses" asp-route-id="@Model.StudentId">Back to List</a>
+</div>
+
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+    // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });</script>
+}
+

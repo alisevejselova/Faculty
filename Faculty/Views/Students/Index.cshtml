@@ -74,10 +74,7 @@
                     @Html.DisplayFor(modelItem => item.EducationLevel)
                 </td>
                 <td>
-                    @foreach (var course in item.Courses)
-                    {
-                        <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseId"> @course.Course.Title </a> <br />
-                    }
+                    <a asp-action="StudentCourses" asp-route-id="@item.Id">Show Courses</a>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
