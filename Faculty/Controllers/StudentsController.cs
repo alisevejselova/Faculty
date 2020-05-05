@@ -30,7 +30,7 @@ namespace Faculty.Controllers
             if (!string.IsNullOrEmpty(SearchString))
             {
                 students = students.Where(s => s.LastName.Contains(SearchString)
-                             || s.FirstName.Contains(SearchString));
+                             || s.LastName.Contains(SearchString));
                 // students = students.Where(s => s.FullName.Contains(SearchString));
 
             } 
@@ -198,7 +198,7 @@ namespace Faculty.Controllers
         {
             return _context.Student.Any(e => e.Id == id);
         }
-        // GET: Students/MyCourses/2
+        // GET: Students/StudentCourses/2
         public async Task<IActionResult> StudentCourses(int? id)
         {
             IQueryable<Course> courses = _context.Course.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).AsQueryable();

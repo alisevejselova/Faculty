@@ -1,0 +1,81 @@
+﻿@model Faculty.ViewModels.EnrollUnEnrollVM
+
+<h2>(Un)Enroll students for @ViewData["CourseTitle"] </h2>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+
+        <form asp-action="Upsert">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!--proveri dali ti treba ova:-->
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.CourseId" value="@ViewData["Idd"]" class="form-control" readonly type="hidden" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NewEnrollStudent.Semester" class="control-label"></label>
+                <input asp-for="NewEnrollStudent.Semester" value=" " class="form-control" />
+                <span asp-validation-for="NewEnrollStudent.Semester" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewEnrollStudent.Year" class="control-label"></label>
+                <input asp-for="NewEnrollStudent.Year" value=" " class="form-control" />
+                <span asp-validation-for="NewEnrollStudent.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Students</label>
+                <select asp-for="SelectedStudents" class="form-control js-example-basic-multiple" asp-items="Model.StudentsList"></select>
+                <span asp-validation-for="SelectedStudents" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.Grade" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.Grade" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.SeminarUrl" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.SeminarUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.ProjectUrl" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.ProjectUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.ExamPoints" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.ExamPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.SeminarPoints" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.SeminarPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.ProjectPoints" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.ProjectPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="NewEnrollStudent.AdditionalPoints" class="form-control" readonly type="hidden" />
+                <span asp-validation-for="NewEnrollStudent.AdditionalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewEnrollStudent.FinishDate" class="control-label"></label>
+                <span asp-validation-for="NewEnrollStudent.FinishDate" class="text-danger">Unenroll(date)</span>
+                <input asp-for="NewEnrollStudent.FinishDate" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Upsert" class="btn btn-primary" />
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Courses</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -208,5 +208,96 @@ namespace Faculty.Controllers
         {
             return _context.Course.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> CourseStudents (int? id)
+        {
+
+
+            
+            IQueryable<Student> students = _context.Student.AsQueryable();
+
+            IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();
+
+            enrollments = enrollments.Where(s => s.CourseId == id); //kurs tum enrollmentleri
+
+            IEnumerable<int> enrollmentsStudentsId = enrollments.Select(e => e.StudentId).Distinct();  //tum student id ler
+
+            students = students.Where(s => enrollmentsStudentsId.Contains(s.Id)); //student uygun olan course al
+
+            students = students.Include(c => c.Courses).ThenInclude(c => c.Course);
+
+
+            ViewData["CourseTitle"] = _context.Course.Where(t => t.Id == id).Select(t => t.Title).FirstOrDefault();
+
+            return View(students);
+        }
+
+
+
+
+        // GET: Courses/Upsert/3
+        public async Task<IActionResult> Upsert(int? id)
+        {
+            var course = _context.Course.Where(m => m.Id == id).Include(m => m.Students).First();
+
+            EnrollUnEnrollVM Vmodel = new EnrollUnEnrollVM
+            {
+                StudentsList = new MultiSelectList(_context.Student , "Id", "FullName"),
+                SelectedStudents = course.Students.Select(sa => sa.StudentId)
+            };
+
+            ViewData["Idd"] = id;
+            ViewData["CourseTitle"] = _context.Course.Where(c => c.Id == id).Select(c => c.Title).FirstOrDefault();
+            
+            return View(Vmodel);
+        }
+
+        // POST: Courses/Upsert/3
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upsert(int id, EnrollUnEnrollVM Vmodel)
+        {
+            if (id != Vmodel.NewEnrollStudent.CourseId)
+            {
+                return NotFound();
+            }
+
+            //enroll students
+            if (Vmodel.NewEnrollStudent.FinishDate == null)
+            {
+                IEnumerable<int> ListStudents = Vmodel.SelectedStudents;
+                IEnumerable<int> ExistStudents = _context.Enrollment.Where
+               (s => ListStudents.Contains(s.StudentId) && s.CourseId == id).Select(s => s.StudentId);
+                IEnumerable<int> NewStudents = ListStudents.Where(s => !ExistStudents.Contains(s));
+
+                foreach (int studentId in NewStudents)
+                    _context.Enrollment.Add(new Enrollment { 
+                        StudentId = studentId,
+                        CourseId = id, 
+                        Year = Vmodel.NewEnrollStudent.Year, 
+                        Semester = Vmodel.NewEnrollStudent.Semester }
+                    );
+
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                //otpisi student so vnesuvanje na FinishDate
+                var enrollments = _context.Enrollment.Where
+                    (e => e.CourseId == id).Include(e => e.Course).Include(e => e.Student);
+
+                foreach (Enrollment enroll in enrollments)
+                {
+                    enroll.FinishDate = Vmodel.NewEnrollStudent.FinishDate;
+                }
+
+                _context.Enrollment.UpdateRange(enrollments);
+                await _context.SaveChangesAsync();
+
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

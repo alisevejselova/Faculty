@@ -21,7 +21,7 @@ namespace Faculty.Models
         [Range(1, 8)]
         public int? Semester { get; set; }
 
-        [Range(1, 4)]
+        
         public int? Year { get; set; }
 
         [Range(1, 100)]
