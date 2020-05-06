@@ -28,11 +28,11 @@ namespace Faculty.Models
         public int? Grade { get; set; }
 
         [Display(Name = "Seminar Url")]
-        [StringLength(255)]
+   
         public string SeminarUrl { get; set; }
 
         [Display(Name = "Project Url")]
-        [StringLength(255)]
+
         public string ProjectUrl { get; set; }
 
         [Range(1, 200)]

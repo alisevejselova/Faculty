@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Faculty.Models;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Faculty.Models
+namespace Faculty.ViewModels
 {
-    public class Teacher
+    public class TeacherFormVm
     {
-        public string ProfilePicture { get; set; }
+        public  IFormFile ProfilePicture { get; set; }
         [Required]
         public int Id { get; set; }
 
@@ -36,8 +38,6 @@ namespace Faculty.Models
         [DataType(DataType.Date)]
         [Display(Name = "Hire Date")]
         public DateTime? HireDate { get; set; }
-
-
         public virtual ICollection<Course> FirstCourses { get; set; }
         public virtual ICollection<Course> SecondCourses { get; set; }
 

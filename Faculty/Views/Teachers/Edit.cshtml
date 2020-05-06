@@ -1,18 +1,24 @@
-﻿@model Faculty.Models.Teacher
+﻿@model Faculty.ViewModels.TeacherFormVm
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Teacher</h4>
+<h4>Edit @ViewData["TeacherFullName"] :</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for=" ProfilePicture" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for=" ProfilePicture" type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose image file</label>
+                </div>
+                <span asp-validation-for=" ProfilePicture" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -56,4 +62,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+    // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });</script>
 }

@@ -7,17 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Faculty.Models;
 using Faculty.ViewModels;
-
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Faculty.Controllers
 {
     public class TeachersController : Controller
     {
         private readonly FacultyContext _context;
-
-        public TeachersController(FacultyContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public TeachersController(FacultyContext context , IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = hostEnvironment;
         }
 
         // GET: Teachers
@@ -72,6 +74,7 @@ namespace Faculty.Controllers
             {
                 return NotFound();
             }
+            ViewData["TeacherFullName"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
 
             return View(teacher);
         }
@@ -87,15 +90,47 @@ namespace Faculty.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Degree,AcademicRank,OfficeNumber,HireDate")] Teacher teacher)
+        public async Task<IActionResult> Create(TeacherFormVm Vmodel)
         {
             if (ModelState.IsValid)
             {
+                string uniqueFileName = UploadedFile(Vmodel);
+
+                Teacher teacher = new Teacher
+                {
+                    ProfilePicture = uniqueFileName,
+                    FirstName = Vmodel.FirstName,
+                    LastName = Vmodel.LastName,
+                    Degree = Vmodel.Degree,
+                    AcademicRank = Vmodel.AcademicRank,
+                    OfficeNumber = Vmodel.OfficeNumber,
+                    HireDate = Vmodel.HireDate,
+                  
+                    FirstCourses = Vmodel.FirstCourses,
+                    SecondCourses = Vmodel.SecondCourses
+                };
+
                 _context.Add(teacher);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(teacher);
+            return View();
+        }
+        private string UploadedFile(TeacherFormVm Vmodel)
+        {
+            string uniqueFileName = null;
+
+            if (Vmodel.ProfilePicture != null)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(Vmodel.ProfilePicture.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    Vmodel.ProfilePicture.CopyTo(fileStream);
+                }
+            }
+            return uniqueFileName;
         }
 
         // GET: Teachers/Edit/5
@@ -111,7 +146,21 @@ namespace Faculty.Controllers
             {
                 return NotFound();
             }
-            return View(teacher);
+            TeacherFormVm Vmodel= new TeacherFormVm
+            {
+                Id = teacher.Id,
+                FirstName = teacher.FirstName,
+                LastName = teacher.LastName,
+                Degree = teacher.Degree,
+                AcademicRank = teacher.AcademicRank,
+                OfficeNumber = teacher.OfficeNumber,
+                HireDate = teacher.HireDate,
+                FirstCourses = teacher.FirstCourses,
+                SecondCourses = teacher.SecondCourses
+            };
+            ViewData["TeacherFullName"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
+
+            return View(Vmodel);
         }
 
         // POST: Teachers/Edit/5
@@ -119,9 +168,9 @@ namespace Faculty.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Degree,AcademicRank,OfficeNumber,HireDate")] Teacher teacher)
+        public async Task<IActionResult> Edit(int id, TeacherFormVm Vmodel)
         {
-            if (id != teacher.Id)
+            if (id != Vmodel.Id)
             {
                 return NotFound();
             }
@@ -130,12 +179,28 @@ namespace Faculty.Controllers
             {
                 try
                 {
+                    string uniqueFileName = UploadedFile(Vmodel);
+
+                    Teacher teacher = new Teacher
+                    {
+                        ProfilePicture = uniqueFileName,
+                        Id = Vmodel.Id,
+                        FirstName = Vmodel.FirstName,
+                        LastName = Vmodel.LastName,
+                        Degree = Vmodel.Degree,
+                        AcademicRank = Vmodel.AcademicRank,
+                        OfficeNumber = Vmodel.OfficeNumber,
+                        HireDate = Vmodel.HireDate,
+                        FirstCourses = Vmodel.FirstCourses,
+                        SecondCourses = Vmodel.SecondCourses
+                    };
+
                     _context.Update(teacher);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TeacherExists(teacher.Id))
+                    if (!TeacherExists(Vmodel.Id))
                     {
                         return NotFound();
                     }
@@ -146,7 +211,7 @@ namespace Faculty.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(teacher);
+            return View(Vmodel);
         }
 
         // GET: Teachers/Delete/5
@@ -163,6 +228,7 @@ namespace Faculty.Controllers
             {
                 return NotFound();
             }
+            ViewData["TeacherFullName"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
 
             return View(teacher);
         }
@@ -173,6 +239,14 @@ namespace Faculty.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
+            //delete picture from the image folder
+            string path = Path.Combine(_webHostEnvironment.WebRootPath, "images", teacher.ProfilePicture);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
             _context.Teacher.Remove(teacher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

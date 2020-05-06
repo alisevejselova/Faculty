@@ -8,6 +8,7 @@ namespace Faculty.Models
 {
     public class Student
     {
+        public string ProfilePicture { get; set; }
         [Required]
         public int Id { get; set; }
 

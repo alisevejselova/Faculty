@@ -292,7 +292,7 @@ namespace Faculty.Controllers
 
             if (Vmodel.SeminarUrl != null)
             {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "SeminalFiles");
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "SeminarFiles");
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(Vmodel.SeminarUrl.FileName);
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))

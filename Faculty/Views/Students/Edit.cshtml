@@ -1,58 +1,59 @@
-﻿@model Faculty.ViewModels.CourseStudentVM
+﻿@model Faculty.ViewModels.StudentFormVM
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Student</h4>
+   <h4>Edit @ViewData["StudentFullName"] :</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Student.Id" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Student.StudentId" class="control-label"></label>
-                <input asp-for="Student.StudentId" class="form-control" />
-                <span asp-validation-for="Student.StudentId" class="text-danger"></span>
+                <label asp-for=" ProfilePicture" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for=" ProfilePicture" type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose profile picture </label>
+                </div>
+                <span asp-validation-for=" ProfilePicture" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StudentId" class="control-label"></label>
+                <input asp-for="StudentId" class="form-control" />
+                <span asp-validation-for="StudentId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.FirstName" class="control-label"></label>
-                <input asp-for="Student.FirstName" class="form-control" />
-                <span asp-validation-for="Student.FirstName" class="text-danger"></span>
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.LastName" class="control-label"></label>
-                <input asp-for="Student.LastName" class="form-control" />
-                <span asp-validation-for="Student.LastName" class="text-danger"></span>
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.EnrollmentDate" class="control-label"></label>
-                <input asp-for="Student.EnrollmentDate" class="form-control" />
-                <span asp-validation-for="Student.EnrollmentDate" class="text-danger"></span>
+                <label asp-for="EnrollmentDate" class="control-label"></label>
+                <input asp-for="EnrollmentDate" class="form-control" />
+                <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.AcquiredCredits" class="control-label"></label>
-                <input asp-for="Student.AcquiredCredits" class="form-control" />
-                <span asp-validation-for="Student.AcquiredCredits" class="text-danger"></span>
+                <label asp-for="AcquiredCredits" class="control-label"></label>
+                <input asp-for="AcquiredCredits" class="form-control" />
+                <span asp-validation-for="AcquiredCredits" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.CurrentSemestar" class="control-label"></label>
-                <input asp-for="Student.CurrentSemestar" class="form-control" />
-                <span asp-validation-for="Student.CurrentSemestar" class="text-danger"></span>
+                <label asp-for="CurrentSemestar" class="control-label"></label>
+                <input asp-for="CurrentSemestar" class="form-control" />
+                <span asp-validation-for="CurrentSemestar" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Student.EducationLevel" class="control-label"></label>
-                <input asp-for="Student.EducationLevel" class="form-control" />
-                <span asp-validation-for="Student.EducationLevel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Courses</label>
-                <select asp-for="SelectedCourses" class="form-control js-example-basic-multiple" asp-items="Model.CourseList">
-                </select>
-                <span asp-validation-for="SelectedCourses" class="text-danger"></span>
+                <label asp-for="EducationLevel" class="control-label"></label>
+                <input asp-for="EducationLevel" class="form-control" />
+                <span asp-validation-for="EducationLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -67,7 +68,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-    <script>$(document).ready(function () { $("#SelectedCourses").select2(); });</script>
+
+    <script type="text/javascript">
+
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 }
