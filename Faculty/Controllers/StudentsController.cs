@@ -42,7 +42,7 @@ namespace Faculty.Controllers
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                dataList = dataList.ToList().Where(s => s.FullName.ToLower().Contains(SearchString.ToLower()));
+                dataList = dataList.ToList().Where(s => (s.FullName + " "+s.LastName).ToLower().Contains(SearchString.ToLower()));
             }
 
             var studentVM = new FullNameStudentIdVM

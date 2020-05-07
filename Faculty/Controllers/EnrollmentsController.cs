@@ -15,12 +15,12 @@ namespace Faculty.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly FacultyContext _context;
-        //private object _webHostEnvironment;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EnrollmentsController(FacultyContext context)
+        public EnrollmentsController(FacultyContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Enrollments
@@ -109,7 +109,7 @@ namespace Faculty.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
+                {  
                     _context.Update(enrollment);
                     await _context.SaveChangesAsync();
                 }
@@ -302,5 +302,7 @@ namespace Faculty.Controllers
             }
             return uniqueFileName;
         }
+       
+
     }
 }

@@ -42,7 +42,7 @@ namespace Faculty.Controllers
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-               teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())).ToList();
+               teachers = teachers.Where(s =>(s.FullName + " " + s.LastName).ToLower().Contains(SearchString.ToLower())).ToList();
                // teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())); 
             }
 
