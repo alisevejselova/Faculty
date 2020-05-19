@@ -3,9 +3,9 @@
     ViewData["Title"] = "CourseStudents";
 }
 
-<h1>CourseStudents</h1>
 
-<h4>@ViewData["CourseTitle"]'s students: </h4>
+
+<h3>@ViewData["CourseTitle"]'s students: </h3>
 <br />
 
 <table class="table">
@@ -39,35 +39,39 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StudentId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EnrollmentDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AcquiredCredits)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CurrentSemestar)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EducationLevel)
-                </td>
-                
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnrollmentDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcquiredCredits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentSemestar)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EducationLevel)
+            </td>
+
+            <td>
+                @{
+                    var enrollment = item.Courses.Where(s => s.CourseId.ToString() == ViewData["CourseId"].ToString()).FirstOrDefault();
+                    int ID = enrollment.Id;
+                }
+                <a asp-controller="Enrollments" asp-action="Details" asp-route-id="@ID">Details</a> |
+                <a asp-controller="Enrollments" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+            
+        </tr>
         }
     </tbody>
 </table>

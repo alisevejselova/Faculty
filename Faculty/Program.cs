@@ -25,10 +25,14 @@ namespace Faculty
                 { 
                     var context = services.GetRequiredService<FacultyContext>(); 
                     context.Database.Migrate();
-                    SeedData.Initialize(services); } 
+                    SeedData.Initialize(services); 
+                } 
                 catch (Exception ex)
                 { var logger = services.GetRequiredService<ILogger<Program>>(); 
-                    logger.LogError(ex, "An error occurred seeding the DB."); } } host.Run(); }
+                    logger.LogError(ex, "An error occurred seeding the DB."); 
+                } 
+            } host.Run();
+        }
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
             WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
     }

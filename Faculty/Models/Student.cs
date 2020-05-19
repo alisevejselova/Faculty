@@ -8,11 +8,11 @@ namespace Faculty.Models
 {
     public class Student
     {
-        public string ProfilePicture { get; set; }
-        [Required]
+      [Required]
         public int Id { get; set; }
-
+  public string ProfilePicture { get; set; }
         [Required]
+        
         [StringLength(10)]
         [Display(Name = "Student ID")]
         public string StudentId { get; set; }

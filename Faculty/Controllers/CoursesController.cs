@@ -228,6 +228,7 @@ namespace Faculty.Controllers
 
 
             ViewData["CourseTitle"] = _context.Course.Where(t => t.Id == id).Select(t => t.Title).FirstOrDefault();
+            ViewData["CourseId"] = id;
 
             return View(students);
         }

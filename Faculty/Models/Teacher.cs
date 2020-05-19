@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 namespace Faculty.Models
 {
     public class Teacher
-    {
-        public string ProfilePicture { get; set; }
+    { 
         [Required]
         public int Id { get; set; }
-
+        public string ProfilePicture { get; set; }
+       
+       
         [Required]
         [StringLength(50)]
         [Display(Name = "First Name")]
