@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Faculty.Models;
 using Faculty.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Faculty.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CoursesController : Controller
     {
         private readonly FacultyContext _context;
@@ -18,7 +20,7 @@ namespace Faculty.Controllers
         {
             _context = context;
         }
-
+  
         // GET: Courses
         public async Task<IActionResult> Index(string CourseSemester , string CourseProgramme, string SearchString)
         {

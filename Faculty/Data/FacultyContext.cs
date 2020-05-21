@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Faculty.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Faculty.Models
 {
-    public class FacultyContext : DbContext
+    public class FacultyContext : IdentityDbContext<AppUser>
     {
         public FacultyContext (DbContextOptions<FacultyContext> options)
             : base(options)
@@ -23,6 +24,8 @@ namespace Faculty.Models
         public DbSet<Faculty.Models.Enrollment> Enrollment { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<Enrollment>().HasOne<Student>(p => p.Student)
                 .WithMany(p => p.Courses)
                 .HasForeignKey(p => p.StudentId);

@@ -9,20 +9,26 @@ using Faculty.Models;
 using Faculty.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Faculty.Controllers
 {
     public class TeachersController : Controller
     {
+        private UserManager<AppUser> userManager;
         private readonly FacultyContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public TeachersController(FacultyContext context , IWebHostEnvironment hostEnvironment)
+
+        public TeachersController(FacultyContext context, IWebHostEnvironment webHostEnvironment, UserManager<AppUser> usrMgr)
         {
             _context = context;
-            _webHostEnvironment = hostEnvironment;
+            _webHostEnvironment = webHostEnvironment;
+            userManager = usrMgr;
         }
 
         // GET: Teachers
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string TeacherAcademicRank, string TeacherDegree, string SearchString)
         {
 
@@ -42,7 +48,7 @@ namespace Faculty.Controllers
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-               teachers = teachers.Where(s =>(s.FullName + " " + s.LastName).ToLower().Contains(SearchString.ToLower())).ToList();
+               teachers = teachers.Where(s =>(s.FirstName + " " + s.LastName).ToLower().Contains(SearchString.ToLower())).ToList();
                // teachers = teachers.Where(s => s.FullName.ToLower().Contains(SearchString.ToLower())); 
             }
 
@@ -61,6 +67,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Teachers/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -80,6 +87,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Teachers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -90,6 +98,7 @@ namespace Faculty.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(TeacherFormVm Vmodel)
         {
             if (ModelState.IsValid)
@@ -134,6 +143,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Teachers/Edit/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -168,6 +178,7 @@ namespace Faculty.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, TeacherFormVm Vmodel)
         {
             if (id != Vmodel.Id)
@@ -215,6 +226,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Teachers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -236,6 +248,7 @@ namespace Faculty.Controllers
         // POST: Teachers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
@@ -256,8 +269,14 @@ namespace Faculty.Controllers
         {
             return _context.Teacher.Any(e => e.Id == id);
         }
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> GetCourses(int id)
         {
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.TeacherId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }
             var courses = _context.Course.Where(c => c.FirstTeacherID == id || c.SecondTeacherID == id);
             courses = courses.Include(t => t.FirstTeacher).Include(t => t.SecondTeacher);
 

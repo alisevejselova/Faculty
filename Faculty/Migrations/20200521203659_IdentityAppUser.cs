@@ -2,7 +2,7 @@
 
 namespace Faculty.Migrations
 {
-    public partial class FacultyMVC : Migration
+    public partial class IdentityAppUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

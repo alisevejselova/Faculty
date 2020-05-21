@@ -9,6 +9,8 @@ using Faculty.Models;
 using Faculty.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Faculty.Controllers
 {
@@ -16,16 +18,16 @@ namespace Faculty.Controllers
     {
         private readonly FacultyContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public StudentsController(FacultyContext context, IWebHostEnvironment webHostEnvironment)
+        private UserManager<AppUser> userManager;
+        public StudentsController(FacultyContext context, IWebHostEnvironment webHostEnvironment, UserManager<AppUser> usrMgr)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
-
+            userManager = usrMgr;
         }
 
         // GET: Students
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string StudentIndex, string SearchString)
         {
             IQueryable<Student> students = _context.Student.AsQueryable();
@@ -54,6 +56,7 @@ namespace Faculty.Controllers
             return View(studentVM);
         }
         // GET: Students/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -74,6 +77,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Students/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -126,9 +130,10 @@ namespace Faculty.Controllers
             return uniqueFileName;
         }
 
-        
+
 
         // GET: Students/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -160,6 +165,7 @@ namespace Faculty.Controllers
         // POST: Students/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -210,6 +216,7 @@ namespace Faculty.Controllers
         }
 
         // GET: Students/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -230,6 +237,7 @@ namespace Faculty.Controllers
         // POST: Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _context.Student.FindAsync(id);
@@ -252,8 +260,14 @@ namespace Faculty.Controllers
             return _context.Student.Any(e => e.Id == id);
         }
         // GET: Students/StudentCourses/2
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> StudentCourses(int? id)
         {
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            } 
             IQueryable<Course> courses = _context.Course.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).AsQueryable();
 
             IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();

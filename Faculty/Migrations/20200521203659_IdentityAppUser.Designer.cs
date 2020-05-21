@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Faculty.Migrations
 {
     [DbContext(typeof(FacultyContext))]
-    [Migration("20200422202005_FacultyMVC")]
-    partial class FacultyMVC
+    [Migration("20200521203659_IdentityAppUser")]
+    partial class IdentityAppUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -45,7 +45,7 @@ namespace Faculty.Migrations
                     b.Property<int?>("SecondTeacherID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Semestar")
+                    b.Property<int>("Semester")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -69,42 +69,40 @@ namespace Faculty.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AdditionalPoints")
+                    b.Property<int?>("AdditionalPoints")
                         .HasColumnType("int");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExamPoints")
+                    b.Property<int?>("ExamPoints")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("FinishDate")
+                    b.Property<DateTime?>("FinishDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Grade")
+                    b.Property<int?>("Grade")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProjectPoints")
+                    b.Property<int?>("ProjectPoints")
                         .HasColumnType("int");
 
                     b.Property<string>("ProjectUrl")
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Semestar")
+                    b.Property<int?>("Semester")
                         .HasColumnType("int");
 
-                    b.Property<int>("SeminarPoints")
+                    b.Property<int?>("SeminarPoints")
                         .HasColumnType("int");
 
                     b.Property<string>("SeminarUrl")
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Year")
+                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -123,17 +121,17 @@ namespace Faculty.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AcquiredCredits")
+                    b.Property<int?>("AcquiredCredits")
                         .HasColumnType("int");
 
-                    b.Property<int>("CurrentSemestar")
+                    b.Property<int?>("CurrentSemestar")
                         .HasColumnType("int");
 
                     b.Property<string>("EducationLevel")
                         .HasColumnType("nvarchar(25)")
                         .HasMaxLength(25);
 
-                    b.Property<DateTime>("EnrollmentDate")
+                    b.Property<DateTime?>("EnrollmentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
@@ -145,6 +143,9 @@ namespace Faculty.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
@@ -176,7 +177,7 @@ namespace Faculty.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<DateTime>("HireDate")
+                    b.Property<DateTime?>("HireDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
@@ -188,6 +189,9 @@ namespace Faculty.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
 
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Teacher");
@@ -196,11 +200,11 @@ namespace Faculty.Migrations
             modelBuilder.Entity("Faculty.Models.Course", b =>
                 {
                     b.HasOne("Faculty.Models.Teacher", "FirstTeacher")
-                        .WithMany("Courses")
+                        .WithMany("FirstCourses")
                         .HasForeignKey("FirstTeacherID");
 
                     b.HasOne("Faculty.Models.Teacher", "SecondTeacher")
-                        .WithMany()
+                        .WithMany("SecondCourses")
                         .HasForeignKey("SecondTeacherID");
                 });
 
