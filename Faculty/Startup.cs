@@ -29,12 +29,7 @@ namespace Faculty
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            
             services.AddControllersWithViews();
             services.AddDbContext<FacultyContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("FacultyContext")));
@@ -48,10 +43,16 @@ namespace Faculty
                 opts.Password.RequireUppercase = true;
                 opts.Password.RequireDigit = true;
             }).AddEntityFrameworkStores<FacultyContext>();
+
               services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordPolicy>();
               services.AddTransient<IUserValidator<AppUser>, CustomUsernameEmailPolicy>();
 
-
+services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
 
             services.AddCors(options =>
